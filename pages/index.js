@@ -1,4 +1,4 @@
-import database from "../../../../infra/database.js"
+import database from "infra/database.js";
 
 function Home() {
   return <h1>te amo laura, meu amor</h1>;

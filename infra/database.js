@@ -1,22 +1,24 @@
-import { Client } from "pg";
+let Client;
 
-async function query(queryString) {
-  const client = new Client({
-    host: process.env.POSTGRES_HOST,
-    port: process.env.POSTGRES_PORT,
-    user: process.env.POSTGRES_USER,
-    database: process.env.POSTGRES_DATABASE,
-    password: process.env.POSTGRES_PASSWORD,
-    ssl: {
-      rejectUnauthorized: false, // Permite conexiones SSL sin verificación estricta del certificado
-    },
-  });
-  await client.connect();
-  const result = await client.query(queryString);
-  await client.end();
-  return result
+if (typeof window === 'undefined') {
+  Client = require('pg').Client;
 }
 
-export default{
-  query: query,
-};
+const client = new Client({
+  connectionString: process.env.DATABASE_URL,
+});
+
+client.connect(err => {
+  if (err) {
+    console.error('Connection error', err.stack);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Attempting to connect to localhost...');
+      client.connectionString = 'postgres://localhost:5432/my_local_db';
+      client.connect();
+    }
+  } else {
+    console.log('Connected to database');
+  }
+});
+
+module.exports = client;
