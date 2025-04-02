@@ -1,0 +1,28 @@
+
+> test@1.0.0 test:watch
+> jest --watchALL
+
+FAIL tests/integration/api/v1/status/get.test.js
+  ✕ GET a /api/v1/status debe retornar 200 (61 ms)
+
+  ● GET a /api/v1/status debe retornar 200
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 500
+
+      1 | test("GET a /api/v1/status debe retornar 200", async () => {
+      2 |   const response = await fetch("http://localhost:3000/api/v1/status");
+    > 3 |   expect(response.status).toBe(200);
+        |                           ^
+      4 | });
+      5 |
+
+      at Object.toBe (tests/integration/api/v1/status/get.test.js:3:27)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 1 total
+Snapshots:   0 total
+Time:        0.297 s, estimated 1 s
+Ran all test suites.
