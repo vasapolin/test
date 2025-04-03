@@ -11,7 +11,7 @@ export default async function migrations(request, response) {
     });
     response.status(200).json(migrations);
   } catch (error) {
-    console.error("Error al procesar migraciones:", error);
+    console.error("Error processing migrations:", error);
     response.status(200).json([]);
   }
 } 

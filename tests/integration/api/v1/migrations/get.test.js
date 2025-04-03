@@ -1,14 +1,14 @@
 import database from "infra/database";
 import fetch from "node-fetch";
 
-// Aumentar el timeout a 60 segundos
+// Increase timeout to 60 seconds
 jest.setTimeout(60000);
 
 beforeAll(async () => {
   try {
     await cleanDatabase();
   } catch (error) {
-    console.warn("No se pudo limpiar la base de datos. Continuando con las pruebas:", error.message);
+    console.warn("Could not clean database. Continuing with tests:", error.message);
   }
 }, 30000);
 
@@ -16,11 +16,11 @@ async function cleanDatabase() {
   try {
     await database.query("drop schema public cascade; create schema public");
   } catch (error) {
-    console.warn("Error al limpiar la base de datos:", error.message);
+    console.warn("Error cleaning database:", error.message);
   }
 }
 
-test("GET a /api/v1/migrations debe retornar 200", async () => {
+test("GET to /api/v1/migrations should return 200", async () => {
   const response = await fetch("http://localhost:3000/api/v1/migrations");
   expect(response.status).toBe(200);
   
