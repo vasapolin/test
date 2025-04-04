@@ -28,10 +28,7 @@ const nextConfig = {
     }
     return config;
   },
-  // Configuración específica para Vercel
-  env: {
-    NODE_ENV: process.env.NODE_ENV,
-  },
+  
   // Asegúrate de que las API routes solo se ejecuten en el servidor
   serverRuntimeConfig: {
     // Configuraciones solo para el servidor
