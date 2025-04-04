@@ -1,4 +1,10 @@
+// Este import solo se ejecutará en el servidor
 import migrationsRunner from 'node-pg-migrate'
+
+// Indica a Next.js que este endpoint solo debe ejecutarse en el servidor
+export const config = {
+  runtime: 'nodejs',
+};
 
 export default async function migrations(request, response) {
   try {

@@ -13,7 +13,9 @@
     "test": "jest --runInBand",
     "test:watch": "jest --watchALL --runInBand",
     "migration:create": "node-pg-migrate --migrations-dir infra/migrations create",
-    "migration:up": "node-pg-migrate --migrations-dir infra/migrations --envPath .env.development up"
+    "migration:up": "node-pg-migrate --migrations-dir infra/migrations --envPath .env.development up",
+    "build": "next build",
+    "vercel-build": "next build"
   },
   "author": "",
   "license": "MIT",
