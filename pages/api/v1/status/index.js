@@ -1,5 +1,10 @@
 import database from "infra/database.js";
 
+// Configuración para asegurar que esta API se ejecute solo en el servidor
+export const config = {
+  runtime: 'nodejs',
+};
+
 async function status(request, response) {
   const updatedAt = new Date().toISOString();
 

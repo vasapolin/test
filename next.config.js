@@ -1,19 +1,36 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  
+  // Configuración explícita para asegurar que las características sean solo de servidor
+  experimental: {
+    serverComponentsExternalPackages: ['pg', 'pg-connection-string', 'node-pg-migrate'],
+  },
+  
   webpack: (config, { isServer }) => {
     if (!isServer) {
-      // No intentes cargar módulos nativos de Node.js en el cliente
+      // Solución más explícita para el lado del cliente
       config.resolve.fallback = {
+        ...config.resolve.fallback,
         fs: false,
         dns: false,
         net: false,
         tls: false,
         pg: false,
         'pg-native': false,
+        crypto: false,
+        stream: false,
+        constants: false,
+        os: false,
+        path: false,
+        child_process: false,
       };
     }
     return config;
+  },
+  // Configuración específica para Vercel
+  env: {
+    NODE_ENV: process.env.NODE_ENV,
   },
   // Asegúrate de que las API routes solo se ejecuten en el servidor
   serverRuntimeConfig: {

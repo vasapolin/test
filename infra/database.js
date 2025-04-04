@@ -1,3 +1,8 @@
+// Verificación para asegurar que este módulo solo se ejecute en el servidor
+if (typeof window !== 'undefined') {
+  throw new Error('This module should only be used on the server side');
+}
+
 import { Client } from 'pg';
 
 function getSSLValue() {
