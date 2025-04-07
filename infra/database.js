@@ -42,27 +42,23 @@ function getSSLValue() {
 }
 
 async function query(queryText, values = []) {
-  // Log para depuración
-  console.log('Intentando conectar a la base de datos...');
-  console.log('DB Host:', process.env.POSTGRES_HOST || process.env.DB_HOST || 'no definido');
-  console.log('DB Name:', process.env.POSTGRES_DATABASE || process.env.DB_NAME || 'no definido');
+  let client;
   
   try {
-    const client = new Client({
+    client = new Client({
       host: process.env.POSTGRES_HOST || process.env.DB_HOST,
-      port: parseInt(process.env.POSTGRES_PORT || process.env.DB_PORT || '5432', 10),
+      port: process.env.POSTGRES_PORT || process.env.DB_PORT || 5432,
+      database: process.env.POSTGRES_DATABASE || process.env.DB_NAME,
       user: process.env.POSTGRES_USER || process.env.DB_USER,
       password: process.env.POSTGRES_PASSWORD || process.env.DB_PASSWORD,
-      database: process.env.POSTGRES_DATABASE || process.env.DB_NAME,
-      ssl: getSSLValue(),
+      ssl: getSSLValue()
     });
 
     await client.connect();
-    console.log('Conexión establecida correctamente');
     const result = await client.query(queryText, values);
     return result;
   } catch (error) {
-    console.error('DB Query Error:', error);
+    console.error('Database query error:', error);
     throw error;
   } finally {
     if (client) {
