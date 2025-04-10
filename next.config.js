@@ -4,7 +4,7 @@ const nextConfig = {
   
   // Configuración explícita para asegurar que las características sean solo de servidor
   experimental: {
-    serverComponentsExternalPackages: ['pg', 'pg-connection-string', 'node-pg-migrate'],
+    serverExternalPackages: ['pg', 'pg-native'],
   },
   
   webpack: (config, { isServer }) => {
