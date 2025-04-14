@@ -3,44 +3,43 @@ import fetch from "node-fetch";
 
 jest.setTimeout(60000);
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 
 beforeAll(async () => {
   try {
-    await cleanDatabase();
+    await waitForServer();
   } catch (error) {
-    console.warn("Could not clean database. Continuing with tests:", error.message);
+    console.warn("Could not wait for server:", error.message);
   }
 }, 30000);
 
-async function cleanDatabase() {
+afterAll(async () => {
   try {
-    // Primero, eliminar todas las tablas existentes
-    const tables = await database.query(`
-      SELECT tablename 
-      FROM pg_tables 
-      WHERE schemaname = 'public'
-    `);
-
-    for (const table of tables.rows) {
-      await database.query(`DROP TABLE IF EXISTS "${table.tablename}" CASCADE`);
-    }
-
-    // Luego, eliminar la tabla de migraciones si existe
-    await database.query(`DROP TABLE IF EXISTS "pgmigrations" CASCADE`);
-  } catch (error) {
-    console.error("Error limpiando la base de datos:", error.message);
-    throw error;
-  } finally {
     await database.pool.end();
+  } catch (error) {
+    console.warn("Error closing database pool:", error.message);
   }
+});
+
+async function waitForServer(retries = 30, delay = 1000) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      const response = await fetch(`http://localhost:${PORT}/api/v1/migrations`);
+      if (response.status === 200) {
+        return;
+      }
+    } catch (error) {
+      console.log(`Intento ${i + 1}/${retries}: El servidor aún no está listo...`);
+    }
+    await new Promise(resolve => setTimeout(resolve, delay));
+  }
+  throw new Error("El servidor no respondió después de varios intentos");
 }
 
 test("POST to /api/v1/migrations should return 200 and an array", async () => {
   const response = await fetch(`http://localhost:${PORT}/api/v1/migrations`, {
     method: "POST",
   });
-
   expect(response.status).toBe(200);
 
   const responseBody = await response.json();
@@ -52,7 +51,6 @@ test("POST to /api/v1/migrations in second call should return empty array", asyn
   const response = await fetch(`http://localhost:${PORT}/api/v1/migrations`, {
     method: "POST",
   });
-
   expect(response.status).toBe(200);
 
   const responseBody = await response.json();

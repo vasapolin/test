@@ -3,7 +3,7 @@ import fetch from "node-fetch";
 
 jest.setTimeout(60000);
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 
 beforeAll(async () => {
   try {

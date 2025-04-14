@@ -1,4 +1,4 @@
- const { execSync } = require('child_process');
+const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '..', '..', '.env.development') });
@@ -23,7 +23,7 @@ function waitForPostgres() {
 
   // Remover sslmode si ya está en la cadena de conexión
   const cleanConnectionString = connectionString.replace(/\?.*$/, '');
-  const finalConnectionString = `${cleanConnectionString}?sslmode=require`;
+  const finalConnectionString = `${cleanConnectionString}?sslmode=disable`;
 
   for (let i = 0; i < maxAttempts; i++) {
     console.log(`Intento ${i + 1} de ${maxAttempts} para conectar a PostgreSQL...`);
