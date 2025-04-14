@@ -1,4 +1,4 @@
-const { execSync } = require('child_process');
+ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '..', '..', '.env.development') });
