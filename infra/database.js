@@ -7,24 +7,28 @@ const { Pool } = require("pg");
 require("dotenv").config({ path: ".env.development" });
 
 function getSSLConfig() {
-  if (
-    process.env.NODE_ENV === "development" &&
-    process.env.POSTGRES_HOST === "localhost"
-  ) {
-    return false;
-  }
-
-  if (process.env.POSTGRES_HOST?.includes("neon.tech")) {
-    console.log("Conectando a Neon.tech con SSL requerido");
+  // En desarrollo local, usamos SSL con certificados autofirmados
+  if (process.env.NODE_ENV === "development") {
     return {
       rejectUnauthorized: false,
-      sslmode: "require",
+      sslmode: "require"
     };
   }
 
-  return process.env.NODE_ENV === "production"
-    ? { rejectUnauthorized: false }
-    : false;
+  // En producción o con Neon.tech, usamos SSL con verificación
+  if (process.env.POSTGRES_HOST?.includes("neon.tech")) {
+    console.log("Conectando a Neon.tech con SSL requerido");
+    return {
+      rejectUnauthorized: true,
+      sslmode: "require"
+    };
+  }
+
+  // En producción, requerimos SSL
+  return {
+    rejectUnauthorized: true,
+    sslmode: "require"
+  };
 }
 
 const pool = new Pool({

@@ -7,10 +7,13 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       POSTGRES_DB: ${POSTGRES_DATABASE:-neondb}
+      POSTGRES_SSL_MODE: require
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./infra/ssl:/etc/ssl/postgresql
+    command: postgres -c ssl=on -c ssl_cert_file=/etc/ssl/postgresql/server.crt -c ssl_key_file=/etc/ssl/postgresql/server.key
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
       interval: 5s
