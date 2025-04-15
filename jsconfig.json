@@ -1,12 +1,11 @@
 {
-   "compilerOptions": {
-     "baseUrl": ".",
-     "paths": {
-       "infra/*": ["infra/*"],
-       "pages/*": ["pages/*"],
-       "tests/*": ["tests/*"]
-     }
-   },
-   "exclude": ["node_modules"]
- }
- 
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "infra/*": ["infra/*"],
+      "pages/*": ["pages/*"],
+      "tests/*": ["tests/*"]
+    }
+  },
+  "exclude": ["node_modules"]
+}
