@@ -29,9 +29,11 @@ async function waitForServer(retries = 30, delay = 1000) {
         return;
       }
     } catch (error) {
-      console.log(`Intento ${i + 1}/${retries}: El servidor aún no está listo...`);
+      console.log(
+        `Intento ${i + 1}/${retries}: El servidor aún no está listo...`,
+      );
     }
-    await new Promise(resolve => setTimeout(resolve, delay));
+    await new Promise((resolve) => setTimeout(resolve, delay));
   }
   throw new Error("El servidor no respondió después de varios intentos");
 }

@@ -24,14 +24,18 @@ afterAll(async () => {
 async function waitForServer(retries = 30, delay = 1000) {
   for (let i = 0; i < retries; i++) {
     try {
-      const response = await fetch(`http://localhost:${PORT}/api/v1/migrations`);
+      const response = await fetch(
+        `http://localhost:${PORT}/api/v1/migrations`,
+      );
       if (response.status === 200) {
         return;
       }
     } catch (error) {
-      console.log(`Intento ${i + 1}/${retries}: El servidor aún no está listo...`);
+      console.log(
+        `Intento ${i + 1}/${retries}: El servidor aún no está listo...`,
+      );
     }
-    await new Promise(resolve => setTimeout(resolve, delay));
+    await new Promise((resolve) => setTimeout(resolve, delay));
   }
   throw new Error("El servidor no respondió después de varios intentos");
 }
