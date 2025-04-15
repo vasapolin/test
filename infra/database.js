@@ -3,70 +3,72 @@ if (typeof window !== 'undefined') {
   throw new Error('This module should only be used on the server side');
 }
 
-import { Client } from 'pg';
+const { Pool } = require('pg');
+require('dotenv').config({ path: '.env.development' });
 
-function getSSLValue() {
-  // Verificar si estamos conectando a Neon.tech
-  if ((process.env.DB_HOST && process.env.DB_HOST.includes('neon.tech')) ||
-      (process.env.POSTGRES_HOST && process.env.POSTGRES_HOST.includes('neon.tech'))) {
+function getSSLConfig() {
+  if (process.env.NODE_ENV === 'development' && process.env.POSTGRES_HOST === 'localhost') {
+    return false;
+  }
+
+  if (process.env.POSTGRES_HOST?.includes('neon.tech')) {
     console.log('Conectando a Neon.tech con SSL requerido');
-    return { 
+    return {
       rejectUnauthorized: false,
       sslmode: 'require'
     };
   }
 
-  // Verificar variables URL de base de datos
-  if (process.env.DATABASE_URL && process.env.DATABASE_URL.includes('neon.tech')) {
-    console.log('Usando DATABASE_URL para Neon.tech con SSL requerido');
-    return { 
-      rejectUnauthorized: false,
-      sslmode: 'require'
-    };
-  }
-
-  if (process.env.DB_SSL) {
-    return { ca: process.env.DB_SSL_CA };
-  }
-
-  // Para entorno de producción, usar SSL de manera predeterminada
-  if (process.env.NODE_ENV === "production") {
-    console.log('Ambiente de producción detectado, usando SSL');
-    return { 
-      rejectUnauthorized: false,
-      sslmode: 'require'
-    };
-  }
-
-  return false;
+  return process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false;
 }
 
-async function query(queryText, values = []) {
-  let client;
-  
-  try {
-    client = new Client({
-      host: process.env.POSTGRES_HOST || process.env.DB_HOST,
-      port: process.env.POSTGRES_PORT || process.env.DB_PORT || 5432,
-      database: process.env.POSTGRES_DATABASE || process.env.DB_NAME,
-      user: process.env.POSTGRES_USER || process.env.DB_USER,
-      password: process.env.POSTGRES_PASSWORD || process.env.DB_PASSWORD,
-      ssl: getSSLValue()
-    });
+const pool = new Pool({
+  host: process.env.POSTGRES_HOST || 'localhost',
+  port: process.env.POSTGRES_PORT || 5432,
+  database: process.env.POSTGRES_DATABASE || 'neondb',
+  user: process.env.POSTGRES_USER || 'postgres',
+  password: process.env.POSTGRES_PASSWORD || 'postgres',
+  ssl: getSSLConfig(),
+  max: 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 10000,
+  keepAlive: true,
+  keepAliveInitialDelayMillis: 10000
+});
 
-    await client.connect();
-    const result = await client.query(queryText, values);
+pool.on('error', (err) => {
+  console.error('Error inesperado en el pool de conexiones:', err);
+  console.error('Stack trace:', err.stack);
+});
+
+pool.on('connect', () => {
+  console.log('Nueva conexión establecida con la base de datos');
+});
+
+async function query(queryConfig, values = []) {
+  console.log('Intentando conectar a la base de datos...');
+  console.log('DB Host:', process.env.POSTGRES_HOST);
+  console.log('DB Name:', process.env.POSTGRES_DATABASE);
+
+  const client = await pool.connect();
+  try {
+    console.log('Conexión establecida correctamente');
+    // Si queryConfig es un objeto, úsalo directamente, si no, créalo
+    const config = typeof queryConfig === 'string' 
+      ? { text: queryConfig, values } 
+      : queryConfig;
+    
+    const result = await client.query(config);
     return result;
   } catch (error) {
     console.error('Database query error:', error);
     throw error;
   } finally {
-    if (client) {
-      await client.end();
-    }
+    client.release();
   }
 }
 
-export default {
+module.exports = {
   query,
+  pool,
 };
