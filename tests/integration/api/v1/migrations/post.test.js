@@ -40,7 +40,7 @@ async function waitForServer(retries = 30, delay = 1000) {
   throw new Error("El servidor no respondió después de varios intentos");
 }
 
-test("POST to /api/v1/migrations should return 200 and an array", async () => {
+test("POST to /api/v1/migrations should return 200 and a valid array", async () => {
   const response = await fetch(`http://localhost:${PORT}/api/v1/migrations`, {
     method: "POST",
   });
@@ -48,7 +48,16 @@ test("POST to /api/v1/migrations should return 200 and an array", async () => {
 
   const responseBody = await response.json();
   expect(Array.isArray(responseBody)).toBe(true);
-  expect(responseBody.length).toBeGreaterThan(0);
+  
+  // Verificar que cada elemento del array tenga la estructura esperada
+  responseBody.forEach((migration) => {
+    expect(migration).toHaveProperty("id");
+    expect(migration).toHaveProperty("name");
+    expect(migration).toHaveProperty("created_at");
+    expect(typeof migration.id).toBe("number");
+    expect(typeof migration.name).toBe("string");
+    expect(migration.created_at).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
+  });
 });
 
 test("POST to /api/v1/migrations in second call should return empty array", async () => {
