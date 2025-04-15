@@ -26,7 +26,7 @@ function waitForPostgres() {
 
   // Remover sslmode si ya está en la cadena de conexión
   const cleanConnectionString = connectionString.replace(/\?.*$/, "");
-  const finalConnectionString = `${cleanConnectionString}?sslmode=disable`;
+  const finalConnectionString = `${cleanConnectionString}?sslmode=require`;
 
   for (let i = 0; i < maxAttempts; i++) {
     console.log(
