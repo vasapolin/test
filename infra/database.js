@@ -4,7 +4,10 @@ if (typeof window !== "undefined") {
 }
 
 const { Pool } = require("pg");
-require("dotenv").config({ path: ".env.development" });
+const dotenv = require("dotenv");
+dotenv.config({
+  path: ".env.development",
+});
 
 function getSSLConfig() {
   if (
@@ -36,7 +39,7 @@ const pool = new Pool({
   ssl: getSSLConfig(),
   max: 20,
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 10000,
+  connectionTimeoutMillis: 30000,
   keepAlive: true,
   keepAliveInitialDelayMillis: 10000,
 });
