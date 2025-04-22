@@ -11,12 +11,6 @@ const createJestConfig = nextJest({
 
 const customJestConfig = {
   testEnvironment: "node",
-  transform: {
-    "^.+\\.js$": "babel-jest"
-  },
-  transformIgnorePatterns: [
-    "/node_modules/(?!(node-fetch)/)"
-  ],
   moduleNameMapper: {
     "^infra/(.*)$": "<rootDir>/infra/$1"
   },
