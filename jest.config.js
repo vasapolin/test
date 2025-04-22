@@ -10,12 +10,14 @@ const createJestConfig = nextJest({
 });
 
 const customJestConfig = {
-  moduleDirectories: ["node_modules", "<rootDir>/"],
-  moduleNameMapper: {
-    // Si usás más aliases (ej: app/, shared/, etc.), agrégalos aquí también
-    "^infra/(.*)$": "<rootDir>/infra/$1",
+  testEnvironment: "node",
+  transform: {
+    "^.+\\.js$": "babel-jest"
   },
-  testEnvironment: "node", // opcional, pero recomendado si estás testeando backend
+  moduleNameMapper: {
+    "^infra/(.*)$": "<rootDir>/infra/$1"
+  },
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.js"]
 };
 
 module.exports = createJestConfig(customJestConfig);
