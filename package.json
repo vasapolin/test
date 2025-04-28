@@ -19,7 +19,8 @@
     "lint:prettier:fix": "prettier --write .",
     "lint:eslint:check": "next lint --dir .",
     "prepare": "husky",
-    "commit": "cz"
+    "commit": "cz",
+    "db:setup": "npm run services:up && npm run services:wait:database && npm run migrations:up"
   },
   "author": "",
   "license": "MIT",
